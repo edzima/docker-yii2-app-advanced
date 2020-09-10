@@ -35,7 +35,7 @@ services:
       - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
     restart: always
     ports:
-      - "${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}"
+      - "${MYSQL_EXTERNAL_PORT}:3006"
     volumes:
       - ../mysql-data-test/db:/var/lib/mysql #mysql-data
     environment:
@@ -44,7 +44,6 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-      VIRTUAL_PORT: "${MYSQL_INTERNAL_PORT}"
   codecept:
     image: bscheshir/codeception:php7.4.3-fpm-alpine-yii2
     depends_on:
