@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} remote_enable=On var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   nginx:
@@ -27,7 +27,7 @@ services:
          - backend.dev
          - frontend.dev
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
   db:
     image: mysql:8.0.19
     entrypoint:
@@ -35,15 +35,16 @@ services:
       - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
     restart: always
     ports:
-      - "33006:3306"
+      - "${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}"
     volumes:
       - ../mysql-data-test/db:/var/lib/mysql #mysql-data
     environment:
-      TZ: "${TIMEZONE}"
-      MYSQL_ROOT_PASSWORD: yii2advanced
-      MYSQL_DATABASE: yii2advanced
-      MYSQL_USER: yii2advanced
-      MYSQL_PASSWORD: yii2advanced
+      TZ: "${TZ}"
+      MYSQL_ROOT_PASSWORD: "{MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      VIRTUAL_PORT: "${MYSQL_INTERNAL_PORT}"
   codecept:
     image: bscheshir/codeception:php7.4.3-fpm-alpine-yii2
     depends_on:
@@ -52,7 +53,7 @@ services:
     volumes:
       - ../php-data:/var/www/html #php-data
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT_CODECEPTION} remote_enable=On"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME_CODECEPTION}"
   browser:
@@ -60,7 +61,7 @@ services:
     volumes:
       - /dev/shm:/dev/shm # the docker run instance may use the default 64MB, that may not be enough in some cases
     ports:
-      - '4444'
-      - '5900'
+      - '${BROWSER_PUBLISH_PORT}:4444'
+      - '${BROWSER_VNC_PORT}:5900'
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
