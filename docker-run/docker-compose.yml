@@ -16,8 +16,8 @@ services:
     image: nginx:1.17.8-alpine
     restart: always
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "${NGINX_FRONTEND_PORT}:8080"
+      - "${NGINX_BACKEND_PORT}:8081"
     depends_on:
       - php
     volumes:
@@ -33,23 +33,24 @@ services:
       - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
     restart: always
     expose:
-      - "3306" #for service mysql-proxy
+      - "${MYSQL_INTERNAL_PORT}" #for service mysql-proxy
     ports:
-      - "3307:3306" #for external connection
+      - "${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}" #for external connection
     volumes:
       - ../mysql-data/db:/var/lib/mysql #mysql-data
     environment:
       TZ: "${TZ}"
-      MYSQL_ROOT_PASSWORD: yii2advanced
-      MYSQL_DATABASE: yii2advanced
-      MYSQL_USER: yii2advanced
-      MYSQL_PASSWORD: yii2advanced
+      MYSQL_ROOT_PASSWORD: "{MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      VIRTUAL_PORT: "${MYSQL_INTERNAL_PORT}"
   db: #mysql-proxy
     image: bscheshir/mysql-proxy:0.8.5
     expose:
-      - "3306" #for service php
+      - "${PROXY_DB_INTERNAL_PORT}" #for service php
     ports:
-      - "3308:3306" #for external connection
+      - "${PROXY_DB_EXTERNAL_PORT}:${PROXY_DB_INTERNAL_PORT}" #for external connection
     restart: always
     volumes:
       - ../mysql-proxy-conf:/opt/mysql-proxy/conf
@@ -58,9 +59,9 @@ services:
       - mysql
     environment:
       TZ: "${TZ}"
-      PROXY_DB_HOST:
-      PROXY_DB_PORT: 3306
+      PROXY_DB_HOST: "${PROXY_DB_HOST}"
+      PROXY_DB_PORT: "${PROXY_DB_INTERNAL_PORT}"
       REMOTE_DB_HOST: mysql
-      REMOTE_DB_PORT: 3306
+      REMOTE_DB_PORT: "${MYSQL_INTERNAL_PORT}"
       LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
       LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
