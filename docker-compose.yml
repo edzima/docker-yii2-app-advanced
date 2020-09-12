@@ -14,9 +14,6 @@ services:
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
-    expose:
-      - "8080"
-      - "8081"
     ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
       - "${NGINX_FRONTEND_PORT}:8080"
       - "${NGINX_BACKEND_PORT}:8081"
