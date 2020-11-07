@@ -32,5 +32,6 @@ select yn in "up" "down" "build" "up --build" "stop" "start"; do
         stop ) command="stop"; break;;
         start ) command="start"; break;;
     esac
+done
 echo $execCommand
 eval $execCommand
