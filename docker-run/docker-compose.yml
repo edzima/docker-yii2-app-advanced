@@ -9,15 +9,15 @@ services:
     depends_on:
       - db
     environment:
-      TZ: Europe/Moscow
+      TZ: "${TZ}"
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "${NGINX_FRONTEND_PORT}:8080"
+      - "${NGINX_BACKEND_PORT}:8081"
     depends_on:
       - php
     volumes:
@@ -25,7 +25,7 @@ services:
       - ../nginx-conf:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
     environment:
-      TZ: Europe/Moscow
+      TZ: "${TZ}"
   mysql:
     image: mysql:8.0.19
     entrypoint:
@@ -35,21 +35,21 @@ services:
     expose:
       - "3306" #for service mysql-proxy
     ports:
-      - "3307:3306" #for external connection
+      - "${MYSQL_EXTERNAL_PORT}:3306" #for external connection
     volumes:
       - ../mysql-data/db:/var/lib/mysql #mysql-data
     environment:
-      TZ: Europe/Moscow
-      MYSQL_ROOT_PASSWORD: yii2advanced
-      MYSQL_DATABASE: yii2advanced
-      MYSQL_USER: yii2advanced
-      MYSQL_PASSWORD: yii2advanced
+      TZ: "${TZ}"
+      MYSQL_ROOT_PASSWORD: "{MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
   db: #mysql-proxy
     image: bscheshir/mysql-proxy:0.8.5
     expose:
-      - "3306" #for service php
+      - 3306 #for service php
     ports:
-      - "3308:3306" #for external connection
+      - "${PROXY_DB_EXTERNAL_PORT}:3306" #for external connection
     restart: always
     volumes:
       - ../mysql-proxy-conf:/opt/mysql-proxy/conf
@@ -57,10 +57,10 @@ services:
     depends_on:
       - mysql
     environment:
-      TZ: Europe/Moscow
-      PROXY_DB_HOST:
-      PROXY_DB_PORT: 3306
+      TZ: "${TZ}"
+      PROXY_DB_HOST: "${PROXY_DB_HOST}"
+      PROXY_DB_PORT: "3306"
       REMOTE_DB_HOST: mysql
-      REMOTE_DB_PORT: 3306
+      REMOTE_DB_PORT: "3306"
       LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
       LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
