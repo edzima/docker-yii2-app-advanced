@@ -62,7 +62,7 @@ services:
       - mysql
     environment:
       TZ: "${TIMEZONE}"
-      PROXY_DB_HOST:
+      PROXY_DB_HOST: "${PROXY_DB_HOST}"
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
