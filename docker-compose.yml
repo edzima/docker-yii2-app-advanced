@@ -13,25 +13,22 @@ services:
     depends_on:
       - db
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
-    expose:
-      - "8080"
-      - "8081"
-    #    ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
-    #      - "8080:8080"
-    #      - "8081:8081"
+    ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
+      - "${NGINX_FRONTEND_PORT}:8080"
+      - "${NGINX_BACKEND_PORT}:8081"
     depends_on:
       - php
     volumes:
-      - ../php-data:/var/www/html #php-data
+      - ./php-data:/var/www/html #php-data
       - ./nginx-conf:/etc/nginx/conf.d #nginx-conf
       - ./nginx-logs:/var/log/nginx #nginx-logs
     environment:
-      TZ: "${TIMEZONE}"
+      TZ: "${TZ}"
   db:
     image: mysql:8.0.19
     entrypoint:
@@ -41,8 +38,8 @@ services:
     volumes:
       - ./mysql-data/db:/var/lib/mysql #mysql-data
     environment:
-      TZ: "${TIMEZONE}"
-      MYSQL_ROOT_PASSWORD: yii2advanced
-      MYSQL_DATABASE: yii2advanced
-      MYSQL_USER: yii2advanced
-      MYSQL_PASSWORD: yii2advanced
+      TZ: "${TZ}"
+      MYSQL_ROOT_PASSWORD: "{MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
