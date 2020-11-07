@@ -1,7 +1,10 @@
 version: '3.7'
 services:
   php:
-    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
+    context: .
+    dockerfile: ../Dockerfile
+    args:
+      PHP_BASE_IMAGE_VERSION: "bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug"
     restart: always
     volumes:
       - ../php-data:/var/www/html #php-data

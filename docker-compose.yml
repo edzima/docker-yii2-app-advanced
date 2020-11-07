@@ -1,7 +1,10 @@
 version: '3.7'
 services:
   php:
-    image: bscheshir/php:7.4.3-fpm-alpine-4yii2
+    context: .
+    dockerfile: Dockerfile
+    args:
+      PHP_BASE_IMAGE_VERSION: "bscheshir/php:7.4.3-fpm-alpine-4yii2"
     restart: always
     volumes:
       - ./php-data:/var/www/html #php-data
@@ -17,9 +20,9 @@ services:
     expose:
       - "8080"
       - "8081"
-#    ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
-#      - "8080:8080"
-#      - "8081:8081"
+    #    ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
+    #      - "8080:8080"
+    #      - "8081:8081"
     depends_on:
       - php
     volumes:
