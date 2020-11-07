@@ -1,6 +1,6 @@
 [submodule "php-data"]
 	path = php-data
-	url = https://github.com/edzima/VestraTele.git
+	url = https://github.com/yiisoft/yii2-app-advanced.git
 [submodule "docker-run/docker-php"]
 	path = docker-run/docker-php
 	url = https://github.com/bscheshirwork/docker-php.git
