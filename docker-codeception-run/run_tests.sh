@@ -8,5 +8,6 @@ cd /var/www/html
 echo "testing code: composer show"
 composer show
 ls -luha
-./yii migrate/up --interactive=0
+./yii_test migrate/up --interactive=0
+./yii_test rbac/init
 codecept run --no-redirect
