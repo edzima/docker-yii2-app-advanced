@@ -6,6 +6,7 @@ services:
     volumes:
       - ./php-data:/var/www/html #php-data
       - ~/.composer/cache:/root/.composer/cache
+      - ./php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - db
     environment:
