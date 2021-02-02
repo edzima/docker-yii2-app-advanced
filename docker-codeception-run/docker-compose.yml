@@ -33,6 +33,7 @@ services:
         aliases:
          - backend.dev
          - frontend.dev
+         - storage.dev
     environment:
       TZ: "${TZ}"
   db:
