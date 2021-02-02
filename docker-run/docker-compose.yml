@@ -19,6 +19,7 @@ services:
     ports:
       - "${NGINX_FRONTEND_PORT}:8080"
       - "${NGINX_BACKEND_PORT}:8081"
+      - "${NGINX_STORAGE_PORT}:8082"
     depends_on:
       - php
     volumes:
