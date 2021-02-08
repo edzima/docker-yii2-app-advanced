@@ -1,19 +1,37 @@
 #!/bin/bash
+
+#CONFIG
 dirName="${PWD##*/}"
 prefix="vestra_"
-composePath="";
-command="";
+testEnv="test.env"
+runEnv="run.env"
+defaultEnv=".env"
+
+#DO NOT CHANGE
+composePath=""
+command=""
 execCommand=""
 versionPrefix=""
+chosenEnv=""
+
+function selectEnvOrDefault() {
+    #$1 - envName
+    if [ -f ./$1 ]; then
+        chosenEnv="$1"
+        return;
+    fi
+    echo "Cannot find $1, setting env to default: $defaultEnv"
+    chosenEnv="$defaultEnv"
+}
 
 clear
 echo "Select version: "
 select yn in "docker-run" "codeception-run" "codeception-run-tests" "prod"; do
     case $yn in
-        docker-run ) composePath="docker-run/docker-compose.yml"; versionPrefix="docker_run_"; break;;
-        codeception-run ) composePath="docker-codeception-run/docker-compose.yml"; versionPrefix="docker_codeception_run_"; break;;
-        codeception-run-tests ) composePath="docker-codeception-run/docker-compose.test.yml"; versionPrefix="docker_codeception_run_tests_"; break;;
-        prod ) composePath="docker-compose.yml";  versionPrefix="prod_"; break;;
+        docker-run ) composePath="docker-run/docker-compose.yml"; versionPrefix="docker_run_"; selectEnvOrDefault $runEnv; break;;
+        codeception-run ) composePath="docker-codeception-run/docker-compose.yml"; versionPrefix="docker_codeception_run_"; selectEnvOrDefault $testEnv; break;;
+        codeception-run-tests ) composePath="docker-codeception-run/docker-compose.test.yml"; versionPrefix="docker_codeception_run_tests_"; selectEnvOrDefault $testEnv; break;;
+        prod ) composePath="docker-compose.yml";  versionPrefix="prod_"; selectEnvOrDefault $defaultEnv; break;;
     esac
 done
 clear
@@ -33,6 +51,6 @@ select yn in "up" "down" "build" "up --build" "stop" "start"; do
         start ) command="start"; break;;
     esac
 done
-execCommand="docker-compose -p $prefix$versionPrefix$dirName -f $composePath $command";
+execCommand="docker-compose -p $prefix$versionPrefix$dirName --env-file $chosenEnv -f $composePath $command";
 echo $execCommand
 eval $execCommand
