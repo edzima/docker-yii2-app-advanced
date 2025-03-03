@@ -33,6 +33,6 @@ select yn in "up" "down" "build" "up --build" "stop" "start"; do
         start ) command="start"; break;;
     esac
 done
-execCommand="docker-compose -p $prefix$versionPrefix$dirName -f $composePath $command";
+execCommand="docker-compose --env-file .env -p $prefix$versionPrefix$dirName -f $composePath $command";
 echo $execCommand
 eval $execCommand

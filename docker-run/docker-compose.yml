@@ -1,7 +1,11 @@
 version: '3.7'
 services:
   php:
-    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
+    build:
+      context: .
+      dockerfile: ../Dockerfile
+      args:
+        PHP_BASE_IMAGE_VERSION: "${YII2_PHP_IMAGE}"
     restart: always
     volumes:
       - ../php-data:/var/www/html #php-data
@@ -28,10 +32,10 @@ services:
     environment:
       TZ: "${TZ}"
   mysql:
-    image: mysql:8.0.19
-    entrypoint:
-      - '/entrypoint.sh'
-      - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
+    image: "${MYSQL_IMAGE}"
+    #entrypoint:
+    #  - '/entrypoint.sh'
+    #  - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
     restart: always
     expose:
       - "3306" #for service mysql-proxy
