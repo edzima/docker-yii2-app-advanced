@@ -31,8 +31,8 @@ services:
       - ../nginx-logs:/var/log/nginx #nginx-logs
     environment:
       TZ: "${TZ}"
-  mysql:
-    image: "${MYSQL_IMAGE}"
+  db:
+    image: "${DB_IMAGE}"
     #entrypoint:
     #  - '/entrypoint.sh'
     #  - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
@@ -41,31 +41,11 @@ services:
       - "3306" #for service mysql-proxy
     ports:
       - "${MYSQL_EXTERNAL_PORT}:3306" #for external connection
-    volumes:
-      - ../mysql-data/db:/var/lib/mysql #mysql-data
+#    volumes:
+#      - ../mysql-data/db:/var/lib/mysql #mysql-data
     environment:
       TZ: "${TZ}"
-      MYSQL_ROOT_PASSWORD: "{MYSQL_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-  db: #mysql-proxy
-    image: bscheshir/mysql-proxy:0.8.5
-    expose:
-      - 3306 #for service php
-    ports:
-      - "${PROXY_DB_EXTERNAL_PORT}:3306" #for external connection
-    restart: always
-    volumes:
-      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
-      - ../mysql-proxy-logs:/opt/mysql-proxy/logs
-    depends_on:
-      - mysql
-    environment:
-      TZ: "${TZ}"
-      PROXY_DB_HOST: "${PROXY_DB_HOST}"
-      PROXY_DB_PORT: "3306"
-      REMOTE_DB_HOST: mysql
-      REMOTE_DB_PORT: "3306"
-      LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
-      LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
+      MARIADB_ROOT_PASSWORD: "{DB_ROOT_PASSWORD}"
+      MARIADB_DATABASE: "${DB_DATABASE}"
+      MARIADB_USER: "${DB_USER}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"

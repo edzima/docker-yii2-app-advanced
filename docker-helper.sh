@@ -1,10 +1,12 @@
 #!/bin/bash
 dirName="${PWD##*/}"
+dirName="${dirName,,}"
 prefix="vestra_"
 composePath="";
 command="";
 execCommand=""
 versionPrefix=""
+prefix=$(grep '^DOCKER_PREFIX=' .env | cut -d '=' -f2-)
 
 clear
 echo "Select version: "
@@ -33,6 +35,7 @@ select yn in "up" "down" "build" "up --build" "stop" "start"; do
         start ) command="start"; break;;
     esac
 done
+
 execCommand="docker-compose --env-file .env -p $prefix$versionPrefix$dirName -f $composePath $command";
 echo $execCommand
 eval $execCommand
